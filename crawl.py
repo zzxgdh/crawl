@@ -12,6 +12,12 @@ import time
 
 class Crawl:
     def __init__(self):
+        href_path = './suno_href'
+        json_path = './suno_json'
+        if not os.path.exists(href_path):
+            os.makedirs(href_path)
+        if not os.path.exists(json_path):
+            os.makedirs(json_path)
         self.driver = self.initChromeDriver()
 
     def initChromeDriver(self):
