@@ -285,7 +285,7 @@ class Crawl:
         time.sleep(5)
         userScroll = self.driver.find_element(By.XPATH,'//*[@id="main-container"]/div[1]')
         # 滚动页面滚轮,设置时间s秒
-        scrollTime = 180
+        scrollTime = 120
         self.driver.execute_script("""
                                     function smoothScrollWithPause(element, totalTimeSec) {
                                         const totalTimeMs = totalTimeSec * 1000;
