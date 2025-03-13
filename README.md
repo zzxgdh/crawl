@@ -15,6 +15,6 @@
     # 最后通过id得到歌曲内容
 
 ## 运行
->
-   pip install selenium
-   python crawl.py
+```
+pip install selenium
+python crawl.py
