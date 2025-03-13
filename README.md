@@ -16,4 +16,5 @@
 
 ## 运行
 >
-    python crawl.py
+   pip install selenium
+   python crawl.py
