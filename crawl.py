@@ -287,33 +287,73 @@ class Crawl:
         # 滚动页面滚轮,设置时间s秒
         scrollTime = 180
         self.driver.execute_script("""
-                                    const element = arguments[0];
-                                    const start = element.scrollTop;
-                                    const startTime = performance.now();
-
-                                    // 用户输入参数
-                                    const speedPerSecond = 500; // 每秒滚动500px
-                                    const duration = arguments[1]*1000;      // 总持续时间
-
-                                    // 计算理论总滚动距离（可能超出实际可滚动范围）
-                                    const totalDistance = speedPerSecond * (duration / 1000);
-
-                                    function scroll() {
-                                        const now = performance.now();
-                                        const elapsed = now - startTime; // 已过去的时间（毫秒）
-                                        const timeRatio = Math.min(elapsed / duration, 1); // 时间进度比例 0~1
-
-                                        // 直接按时间比例计算滚动位置（不检查是否超出实际可滚动范围）
-                                        const newScrollTop = start + totalDistance * timeRatio;
-                                        element.scrollTop = newScrollTop;
-
-                                        // 未超时则继续滚动（即使实际无法滚动也会继续执行）
-                                        if (elapsed < duration) {
-                                            requestAnimationFrame(scroll);
+                                    function smoothScrollWithPause(element, totalTimeSec) {
+                                        const totalTimeMs = totalTimeSec * 1000;
+                                        let currentPosition = element.scrollTop;
+                                        let elapsedTime = 0;
+                                        let accumulatedDistance = 0;
+                                        // 每段参数配置
+                                        const segmentConfig = {
+                                            scrollSpeed: 500,       // 每秒滚动500px
+                                            segmentDistance: 1500,  // 每段滚动距离
+                                            pauseDuration: 1000,    // 段间停顿时间
+                                            get scrollDuration() {  // 每段滚动时间（3秒）
+                                                return (this.segmentDistance / this.scrollSpeed) * 1000;
+                                            }
+                                        };
+                                    
+                                        // 关键动画函数
+                                        function animateScroll(targetPosition, duration) {
+                                            return new Promise(resolve => {
+                                                const startTime = performance.now();
+                                                
+                                                function step(currentTime) {
+                                                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                                                    element.scrollTop = currentPosition + (targetPosition - currentPosition) * progress;
+                                                    
+                                                    if (progress < 1) {
+                                                        requestAnimationFrame(step);
+                                                    } else {
+                                                        resolve();
+                                                    }
+                                                }
+                                                requestAnimationFrame(step);
+                                            });
                                         }
+                                    
+                                        // 主控制逻辑
+                                        (async function execute() {
+                                            while (elapsedTime < totalTimeMs) {
+                                                // 计算本段可用时间
+                                                const remainingTime = totalTimeMs - elapsedTime;
+                                                const shouldPause = accumulatedDistance >= segmentConfig.segmentDistance;
+                                                
+                                                // 执行段间停顿
+                                                if (shouldPause && remainingTime > segmentConfig.pauseDuration) {
+                                                    await new Promise(r => setTimeout(r, segmentConfig.pauseDuration));
+                                                    elapsedTime += segmentConfig.pauseDuration;
+                                                    accumulatedDistance = 0;  // 重置累计距离
+                                                    continue;
+                                                }
+                                    
+                                                // 计算本段滚动距离和时间
+                                                const scrollTime = Math.min(
+                                                    remainingTime,
+                                                    segmentConfig.scrollDuration
+                                                );
+                                                const scrollDistance = (scrollTime / 1000) * segmentConfig.scrollSpeed;
+                                                
+                                                // 执行平滑滚动
+                                                await animateScroll(currentPosition + scrollDistance, scrollTime);
+                                                
+                                                // 更新状态
+                                                currentPosition += scrollDistance;
+                                                accumulatedDistance += scrollDistance;
+                                                elapsedTime += scrollTime;
+                                            }
+                                        })();
                                     }
-
-                                    requestAnimationFrame(scroll);
+                                    smoothScrollWithPause(arguments[0], arguments[1]);
                                 """, userScroll, scrollTime)
         time.sleep(scrollTime + 1)
         songs_element = self.driver.find_elements(By.XPATH,'/html/body/div[1]/div[1]/div[2]/div[2]/div/div[1]/div[1]/div/div[4]/div[2]/div/div[2]/div')
