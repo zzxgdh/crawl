@@ -375,5 +375,5 @@ if __name__ == "__main__":
     # 先根据1-4列获取对应的用户
     # crawl.getAllUsers()
     # 再通过用户获取对应的歌曲id保存至suno_href
-    crawl.getSongIdFromUsers()
+    # crawl.getSongIdFromUsers()
     # 最后通过id得到歌曲内容
