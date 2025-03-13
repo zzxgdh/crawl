@@ -2,10 +2,14 @@
 
 ## 配置
 运行前确保谷歌浏览器已经登录过suno
->
-    谷歌浏览器的驱动器在https://googlechromelabs.github.io/chrome-for-testing/#stable里面找对应版本下载
-    chrome_options.add_argument("--user-data-dir=C:\\Users\\gdh\\AppData\\Local\\Google\\Chrome\\User Data")
-    将此处的浏览器用户配置修改为自己本地的
+```
+service = Service("C:\\Users\\gdh\\Downloads\\chromedriver-win64\\chromedriver.exe")
+谷歌浏览器的驱动器在https://googlechromelabs.github.io/chrome-for-testing/#stable里面找对应版本下载
+```
+```
+chrome_options.add_argument("--user-data-dir=C:\\Users\\gdh\\AppData\\Local\\Google\\Chrome\\User Data")
+将此处的浏览器用户配置修改为自己本地的
+```
   
  ### 使用selenium模拟用户浏览器进行访问，可以获取用户信息和通过用户信息获取歌曲id信息，最后爬取歌曲。
 
