@@ -13,3 +13,7 @@
     # 再通过用户获取对应的歌曲id保存至suno_href
     crawl.getSongIdFromUsers()
     # 最后通过id得到歌曲内容
+
+## 运行
+>
+    python crawl.py
