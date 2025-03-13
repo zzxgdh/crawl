@@ -296,7 +296,7 @@ class Crawl:
                                         const segmentConfig = {
                                             scrollSpeed: 500,       // 每秒滚动500px
                                             segmentDistance: 1500,  // 每段滚动距离
-                                            pauseDuration: 1000,    // 段间停顿时间
+                                            pauseDuration: 2000,    // 段间停顿时间
                                             get scrollDuration() {  // 每段滚动时间（3秒）
                                                 return (this.segmentDistance / this.scrollSpeed) * 1000;
                                             }
